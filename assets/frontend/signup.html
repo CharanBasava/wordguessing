@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sign Up - Draw & Play</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    /* Your existing CSS here, with one minor addition for the 'name' field */
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Segoe UI', sans-serif; display: flex; height: 100vh; }
+    .container { display: flex; width: 100%; }
+    .right-panel {
+      flex: 1;
+      padding: 60px 80px;
+      display: flex; flex-direction: column; justify-content: center;
+      background-color: #fff;
+    }
+    .left-panel {
+      flex: 1;
+      background: url('https://images.pexels.com/photos/3662630/pexels-photo-3662630.jpeg') no-repeat center center/cover;
+    }
+    h2 { font-size: 32px; margin-bottom: 8px; color: #111827; }
+    p { font-size: 14px; margin-bottom: 24px; }
+    a { color: #2563eb; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    /* UPDATED: Added input[type="text"] to style the new name field */
+    input[type="text"], input[type="email"], input[type="password"] {
+      width: 100%; padding: 14px; margin-top: 8px; margin-bottom: 20px;
+      border: 1px solid #d1d5db; border-radius: 8px; font-size: 16px;
+    }
+    .form-group label { font-size: 14px; color: #374151; }
+    .form-options {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 14px; margin-bottom: 20px;
+    }
+    .form-options input { margin-right: 6px; }
+    button.signup-btn {
+      background-color: #1f2937; color: white; border: none; padding: 14px;
+      width: 100%; font-size: 16px; border-radius: 8px; cursor: pointer;
+    }
+    .divider {
+      text-align: center; margin: 20px 0; color: #6b7280; font-size: 14px;
+    }
+    .social-buttons button {
+      display: flex; align-items: center; justify-content: center;
+      background-color: #f3f4f6; border: 1px solid #d1d5db; border-radius: 8px;
+      width: 100%; padding: 12px; margin-top: 10px; font-size: 14px; cursor: pointer;
+    }
+    .social-buttons img { height: 20px; margin-right: 10px; }
+    #signupMsg {
+      color: red; font-size: 15px; font-weight: bold; margin-bottom: 8px; min-height: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="right-panel">
+      <h2>Sign up</h2>
+      <p>Already have an account? <a href="login.html">Login now</a></p>
+      <div id="signupMsg"></div>
+
+      <!-- NEW: Name field added here -->
+      <div class="form-group">
+        <label for="name">Your Name</label>
+        <input type="text" id="name" placeholder="Enter your display name" required />
+      </div>
+
+      <div class="form-group">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" placeholder="example@gmail.com" required />
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="••••••••" required />
+      </div>
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" id="confirmPassword" placeholder="••••••••" required />
+      </div>
+      <div class="form-options">
+        <label><input type="checkbox" id="rememberMe" /> Remember me</label>
+        <a href="#">Forgot Password?</a>
+      </div>
+      <button class="signup-btn" id="signupBtn">Sign up</button>
+     
+    <div class="left-panel"></div>
+  </div>
+
+  <!-- UPDATED: Script now sends the 'name' field -->
+  <script>
+    document.getElementById('signupBtn').addEventListener('click', async (event) => {
+      event.preventDefault();
+      const msg = document.getElementById('signupMsg');
+      msg.textContent = "";
+
+      const name = document.getElementById('name').value.trim(); // Get name
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      if (!name || !email || !password || !confirmPassword) { // Add name validation
+        msg.textContent = "Please fill all fields.";
+        return;
+      }
+      if (password !== confirmPassword) {
+        msg.textContent = "Passwords do not match.";
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          // Add name to the request body
+          body: JSON.stringify({ name, username: email, password })
+        });
+
+        const result = await response.json();
+        if (response.ok && result.success) {
+          msg.style.color = "green";
+          msg.textContent = 'Sign up successful! Redirecting to login...';
+          setTimeout(() => {
+            window.location.href = 'login.html';
+          }, 1200);
+        } else {
+          msg.style.color = "red";
+          msg.textContent = result.message || 'Sign up failed.';
+        }
+      } catch (error) {
+        msg.style.color = "red";
+        msg.textContent = 'Error connecting to server.';
+      }
+    });
+  </script>
+</body>
+</html>

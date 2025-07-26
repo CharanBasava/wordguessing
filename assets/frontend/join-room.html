@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Join Room - Drawsarous</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      height: 100vh;
+      background-image: url('https://images.pexels.com/photos/255379/pexels-photo-255379.jpeg');
+      background-size: cover;
+      background-position: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.92);
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h1 {
+      margin-bottom: 25px;
+      color: #333;
+      font-size: 28px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 14px;
+      margin: 12px 0;
+      font-size: 16px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    input[type="text"]:focus {
+      border-color: #f8b500;
+      box-shadow: 0 0 5px #f8b50088;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background-color: #f8b500;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #d99900;
+    }
+
+    #joinMessage {
+      margin-top: 15px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+  </style>
+
+  <!-- 🔐 Require login -->
+  <script>
+    if (!localStorage.getItem('userId')) {
+      window.location.href = 'login.html';
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>Join a Room</h1>
+    <form id="joinForm">
+      <input type="text" id="roomCode" placeholder="Enter Room Code" required>
+      <button type="submit">Join</button>
+    </form>
+    <p id="joinMessage"></p>
+  </div>
+
+  <script>
+    document.getElementById('joinForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const roomCode = document.getElementById('roomCode').value.trim().toLowerCase();
+      const userId = localStorage.getItem('userId'); // already logged in
+      const playerName = localStorage.getItem('email') || "Player"; // optional name
+
+      const response = await fetch(`/api/rooms/check?roomCode=${roomCode}`);
+      const msg = document.getElementById('joinMessage');
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.exists) {
+          msg.style.color = 'green';
+          msg.textContent = '✅ Joined successfully!';
+          setTimeout(() => {
+            window.location.href = `game.html?room=${roomCode}`;
+          }, 1000);
+        } else {
+          msg.style.color = 'red';
+          msg.textContent = '❌ Room not found.';
+        }
+      } else {
+        msg.style.color = 'red';
+        msg.textContent = '❌ Server error.';
+      }
+    });
+  </script>
+</body>
+</html>

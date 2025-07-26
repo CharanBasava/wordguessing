@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create Private Room - Drawsarous</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      height: 100vh;
+      background-image: url('https://images.pexels.com/photos/255379/pexels-photo-255379.jpeg');
+      background-size: cover;
+      background-position: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.92);
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 {
+      margin-bottom: 25px;
+      color: #333;
+      font-size: 28px;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 12px 14px;
+      margin: 12px 0;
+      font-size: 16px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    input:focus {
+      border-color: #f8b500;
+      box-shadow: 0 0 5px #f8b50088;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background-color: #f8b500;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #d99900;
+    }
+
+    #createMessage {
+      margin-top: 15px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+  </style>
+
+  <!-- 🔐 Redirect to login if user is not logged in -->
+  <script>
+    if (!localStorage.getItem('userId')) {
+      window.location.href = 'login.html';
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h2>Create Private Room</h2>
+    <form id="createRoomForm">
+      <!-- Only taking maxPlayers as required -->
+      <input type="number" id="maxPlayers" placeholder="Max Players (2-12)" min="2" max="12" required />
+      <button type="submit">Create Room</button>
+    </form>
+    <p id="createMessage"></p>
+  </div>
+
+  <script>
+    document.getElementById('createRoomForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const maxPlayers = parseInt(document.getElementById('maxPlayers').value);
+      const message = document.getElementById('createMessage');
+
+      try {
+        const response = await fetch('/api/rooms/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ maxPlayers })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          message.style.color = 'green';
+          message.textContent = "✅ Room created successfully!";
+          setTimeout(() => {
+            window.location.href = `game.html?room=${result.roomCode}`;
+          }, 1000);
+        } else {
+          message.style.color = 'red';
+          message.textContent = "❌ " + (result.message || 'Room creation failed');
+        }
+      } catch (error) {
+        message.style.color = 'red';
+        message.textContent = '❌ Server error. Could not create room.';
+        console.error('Error:', error);
+      }
+    });
+  </script>
+</body>
+</html>

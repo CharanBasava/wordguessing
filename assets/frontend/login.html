@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sign In - Draw & Play</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    /* Your original styles (unchanged) */
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Segoe UI', sans-serif; display: flex; height: 100vh; }
+    .container { display: flex; width: 100%; }
+    .left-panel {
+      flex: 1;
+      background: url('https://images.pexels.com/photos/3662630/pexels-photo-3662630.jpeg') no-repeat center center/cover;
+    }
+    .right-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px 80px;
+      background-color: #ffffff;
+    }
+    .right-panel h2 { font-size: 32px; margin-bottom: 8px; color: #111827; }
+    .right-panel p { font-size: 14px; margin-bottom: 24px; }
+    .right-panel a { color: #2563eb; text-decoration: none; }
+    .right-panel a:hover { text-decoration: underline; }
+    input[type="email"], input[type="password"] {
+      width: 100%; padding: 14px; margin-top: 8px; margin-bottom: 20px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 16px;
+    }
+    .form-group label { font-size: 14px; color: #374151; }
+    .form-options {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 14px;
+    }
+    .form-options input { margin-right: 6px; }
+    button.login-btn {
+      background-color: #1f2937; color: white; border: none; padding: 14px;
+      width: 100%; font-size: 16px; border-radius: 8px; cursor: pointer;
+    }
+    .divider { text-align: center; margin: 20px 0; color: #6b7280; font-size: 14px; }
+    .social-buttons button {
+      display: flex; align-items: center; justify-content: center;
+      background-color: #f3f4f6; border: 1px solid #d1d5db; border-radius: 8px;
+      width: 100%; padding: 12px; margin-top: 10px; font-size: 14px; cursor: pointer;
+    }
+    .social-buttons img { height: 20px; margin-right: 10px; }
+    #loginMsg { color: red; font-weight: bold; font-size: 15px; min-height: 18px; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="left-panel"></div>
+    <div class="right-panel">
+      <h2>Sign in</h2>
+      <p>Don't have an account? <a href="signup.html">Create now</a></p>
+      <div id="loginMsg"></div>
+      <div class="form-group">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" placeholder="example@gmail.com" required />
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="••••••••" required />
+      </div>
+      <div class="form-options">
+        <label><input type="checkbox" id="rememberMe" /> Remember me</label>
+        <a href="#">Forgot Password?</a>
+      </div>
+      <button class="login-btn" id="loginBtn">Sign in</button>
+    
+    </div>
+  </div>
+
+  <!-- UPDATED: Script now saves the user's name to localStorage -->
+  <script>
+    document.getElementById('loginBtn').addEventListener('click', async function(e) {
+      e.preventDefault();
+      const msg = document.getElementById('loginMsg');
+      msg.textContent = "";
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!email || !password) {
+        msg.textContent = 'Please enter both email and password.';
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: email, password })
+        });
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          localStorage.setItem('userId', result.userId);
+          localStorage.setItem('email', email);
+          // NEW: Save the user's name from the server response
+          localStorage.setItem('name', result.name); 
+          
+          msg.style.color = "green";
+          msg.textContent = 'Login successful! Redirecting...';
+          setTimeout(() => {
+            // Redirect to the main page or a lobby after login
+            window.location.href = 'index.html'; 
+          }, 800);
+        } else {
+          msg.style.color = "red";
+          msg.textContent = result.message || 'Login failed.';
+        }
+      } catch (err) {
+        msg.style.color = "red";
+        msg.textContent = 'Something went wrong. Please try again.';
+      }
+    });
+  </script>
+</body>
+</html>

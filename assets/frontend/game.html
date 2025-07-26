@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Drawsarous Game</title>
+  <link rel="stylesheet" href="game.css" />
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+  <script>
+    if (!localStorage.getItem('userId')) {
+      window.location.href = 'login.html';
+    }
+  </script>
+  <style>
+    /* Optional quick style for scores in sidebar if not in your CSS */
+    .sidebar h3 { margin-top: 0; }
+    #scoresList { list-style:none; padding:0; margin:10px 0; }
+    #scoresList li { margin-bottom: 2px; color: #333; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <div class="game-header">
+      <div class="room-id">Room: <span id="roomId"></span></div>
+      <div class="timer">Timer: <span id="timer">60</span>s</div>
+      <button id="logoutBtn" style="float:right;">Logout</button>
+    </div>
+    <div class="game-main">
+      <div class="canvas-container">
+        <canvas id="drawingBoard" width="800" height="500"></canvas>
+        <div class="color-palette">
+          <div class="color-option" style="background: black;" data-color="#000000"></div>
+          <div class="color-option" style="background: red;" data-color="#FF0000"></div>
+          <div class="color-option" style="background: orange;" data-color="#FFA500"></div>
+          <div class="color-option" style="background: yellow;" data-color="#FFFF00"></div>
+          <div class="color-option" style="background: green;" data-color="#008000"></div>
+          <div class="color-option" style="background: blue;" data-color="#0000FF"></div>
+          <div class="color-option" style="background: purple;" data-color="#800080"></div>
+          <div class="color-option" style="background: pink;" data-color="#FF69B4"></div>
+          <button id="penTool">Pen</button>
+          <button id="eraserTool">Eraser</button>
+        </div>
+      </div>
+      <div class="sidebar">
+        <h3>Players</h3>
+        <ul id="playersList"></ul>
+        <h3>Scores</h3>
+        <ul id="scoresList"></ul>
+        <div id="chatBox" style="height:120px; overflow-y:auto; margin-bottom:5px; border:1px solid #ddd; border-radius:6px; background: #fafafa;"></div>
+        <input id="chatInput" type="text" placeholder="Type a guess..." autocomplete="off" style="width:98%;margin-top:4px;" />
+      </div>
+    </div>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="game.js"></script>
+  <script>
+    document.getElementById('logoutBtn').onclick = function() {
+      localStorage.clear();
+      window.location.href = 'login.html';
+    };
+  </script>
+</body>
+</html>
