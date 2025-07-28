@@ -1,0 +1,72 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background: url("https://images.pexels.com/photos/3350123/pexels-photo-3350123.jpeg") no-repeat center center/cover;
+  height: 100vh;
+  color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.title h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.title p {
+  margin: 0;
+  font-size: 12px;
+}
+
+.nav button {
+  background: none;
+  border: none;
+  color: white;
+  margin-left: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+input[type="text"] {
+  padding: 12px;
+  width: 300px;
+  border-radius: 20px;
+  border: none;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.buttons button {
+  padding: 10px 20px;
+  margin: 5px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.buttons button:first-child {
+  background-color: #ddd;
+  color: #000;
+}
+
+.buttons button:last-child {
+  background-color: #3b4c6a;
+  color: white;
+}

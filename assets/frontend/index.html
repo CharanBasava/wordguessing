@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Draw & Play</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="title">
+      <h1>Draw & Play</h1>
+      <p>It's time to take a break</p>
+    </div>
+    <div class="nav">
+      <button onclick="login()">Log In</button>
+      <button onclick="playNow()">Play Now →</button>
+    </div>
+  </div>
+
+  <!-- Main section -->
+  <div class="main">
+    <input type="text" id="username" placeholder="Enter your name" />
+    <div class="buttons">
+      <button onclick="joinRoom('public')">Public Room</button>
+      <button onclick="goToPrivateRoom()">Private Room</button>
+    </div>
+  </div>
+
+<script>
+  function goToPrivateRoom() {
+    window.location.href = "room.html";
+  }
+</script>
+
+  <script src="script.js"></script>
+</body>
+</html>
