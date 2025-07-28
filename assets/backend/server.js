@@ -1,5 +1,5 @@
 const express = require("express");
-const path = require = require("path");
+const path = require("path"); // CORRECTED: Removed the extra ' = require'
 const app = express();
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
@@ -47,7 +47,7 @@ const roomGameState = {}; // {
 //     roundCount: 0,
 //     maxRounds: 0,
 //     roundWordStartTime: 0,
-//     drawingHistory: [] // NEW: To store all drawing strokes for replay
+//     drawingHistory: [] // To store all drawing strokes for replay
 //   }
 // }
 
@@ -108,7 +108,7 @@ function startNewRound(roomId) {
       clearInterval(game.roundTimerInterval);
       io.to(roomId).emit("message", "Time's up! The word was: " + game.word);
       if (game.roundCount < game.maxRounds) {
-        startNewRound(roomId);
+        setTimeout(() => startNewRound(roomId), 3000);
       } else {
         endGame(roomId);
       }
@@ -126,7 +126,7 @@ function startNewRound(roomId) {
   io.to(currentDrawer.socketId).emit("drawerWord", game.word);
 
   // Clear canvas for new round AND reset drawing history for the room
-  game.drawingHistory = []; // NEW: Clear the drawing history for the room
+  game.drawingHistory = []; // Clear the drawing history for the room
   io.to(roomId).emit("canvasCleared");
 }
 
@@ -162,7 +162,7 @@ async function startGame(roomId) {
   game.players = players.map(p => p.userId);
   game.scores = game.players.reduce((acc, userId) => ({ ...acc, [userId]: 0 }), {});
 
-  game.drawingHistory = []; // NEW: Initialize drawing history when game starts
+  game.drawingHistory = []; // Initialize drawing history when game starts
 
   game.gameTimerInterval = setInterval(() => {
     game.gameTimeRemaining--;
@@ -248,7 +248,7 @@ io.on("connection", (socket) => {
         roundCount: 0,
         maxRounds: 0,
         roundWordStartTime: 0,
-        drawingHistory: [] // NEW: Initialize drawing history for a new room
+        drawingHistory: [] // Initialize drawing history for a new room
       };
     }
     const game = roomGameState[roomId];
@@ -271,7 +271,7 @@ io.on("connection", (socket) => {
         }
         io.to(socket.id).emit("scoreUpdate", { scores: game.scores, players: roomPlayers[roomId] });
 
-        // NEW: Replay drawing history to the joining player
+        // Replay drawing history to the joining player
         io.to(socket.id).emit("canvasCleared"); // Clear their canvas first
         game.drawingHistory.forEach(drawData => {
           io.to(socket.id).emit("draw", drawData); // Then redraw
@@ -299,7 +299,7 @@ io.on("connection", (socket) => {
     }
   });
 
-  // NEW: Store drawing data in history
+  // Store drawing data in history
   socket.on("draw", ({ x, y, color, roomId, eraser }) => {
     const game = roomGameState[roomId];
     if (game && game.started && game.players[game.drawerIdx] === socket.userId) {
@@ -309,7 +309,7 @@ io.on("connection", (socket) => {
     }
   });
 
-  // UPDATED: Clear drawing history when clearCanvas is called
+  // Clear drawing history when clearCanvas is called
   socket.on('clearCanvas', ({ roomId }) => {
     const game = roomGameState[roomId];
     if (game && game.started && game.players[game.drawerIdx] === socket.userId) {
